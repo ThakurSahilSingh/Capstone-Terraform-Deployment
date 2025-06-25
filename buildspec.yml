@@ -97,5 +97,6 @@ artifacts:
   files:
     - k8s-out/frontend-deployment.yaml
     - k8s-out/backend-deployment.yaml
+    - buildspec-deploy.yml
     - trivy-reports/*
   discard-paths: yes
