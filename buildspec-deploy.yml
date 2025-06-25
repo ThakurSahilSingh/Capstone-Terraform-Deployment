@@ -2,8 +2,8 @@ version: 0.2
  
 phases:
   install:
-    runtime-versions:
-      kubectl: 1.27
+  #   runtime-versions:
+  #     kubectl: 1.27
     commands:
       - echo Installing dependencies...
       - curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.6/2023-10-26/bin/linux/amd64/kubectl
