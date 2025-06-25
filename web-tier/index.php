@@ -1,9 +1,9 @@
 <?php
 $apiUrl = 'http://app-service/';
-
+ 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['name'];
-
+ 
     $options = [
         'http' => [
             'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
@@ -13,154 +13,115 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ];
     $context = stream_context_create($options);
     file_get_contents($apiUrl, false, $context);
-
+ 
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
 }
-
+ 
 $response = file_get_contents($apiUrl);
 $users = json_decode($response, true);
 ?>
-
+ 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Flask-MySQL App</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <title>User Journal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6f8;
-            color: #2a2a2a;
-            line-height: 1.6;
-            position: relative;
-            overflow: hidden;
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
         }
-
-        .bubble-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
+ 
+        header {
+            background-color: #20263a;
+            color: #ffffff;
+            padding: 28px 0;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+            letter-spacing: 1px;
+            font-size: 24px;
         }
-
-        .bubble {
-            position: absolute;
-            bottom: -100px;
-            background: rgba(100, 181, 246, 0.15);
-            border-radius: 50%;
-            animation: floatUp linear infinite;
+ 
+        .wrapper {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px #e4e4e4 inset, 0 8px 20px rgba(0,0,0,0.05);
         }
-
-        @keyframes floatUp {
-            0% {
-                transform: translateY(0) scale(1);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-1200px) scale(1.2);
-                opacity: 0;
-            }
+ 
+        h2 {
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a1a1a;
         }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 720px;
-            margin: 60px auto;
-            padding: 40px;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        h1, h2 {
-            color: #003366;
-            border-bottom: 2px solid #003366;
-            padding-bottom: 6px;
-            margin-bottom: 25px;
-        }
-
+ 
         form {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 16px;
-            margin-bottom: 30px;
         }
-
-        input[type="text"] {
-            flex: 1 1 280px;
-            padding: 14px 16px;
-            border: 2px solid #cfd8dc;
-            border-radius: 6px;
+ 
+        textarea {
             font-size: 16px;
-            background-color: #ffffff;
-            transition: border-color 0.3s ease;
+            padding: 16px;
+            border: 1px solid #ccc;
+            border-left: 6px solid #20263a;
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Open Sans', sans-serif;
+            background-color: #fdfdfd;
         }
-
-        input[type="text"]:focus {
-            border-color: #1565c0;
+ 
+        textarea:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.2);
+            border-color: #20263a;
+            box-shadow: 0 0 0 3px rgba(32, 38, 58, 0.1);
         }
-
+ 
         input[type="submit"] {
-            padding: 14px 24px;
-            background-color: #1565c0;
+            padding: 12px 22px;
+            background-color: #20263a;
             color: white;
             font-size: 16px;
-            font-weight: 600;
             border: none;
-            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease;
+            transition: all 0.2s ease;
+            align-self: flex-start;
         }
-
+ 
         input[type="submit"]:hover {
-            background-color: #0d47a1;
-            transform: translateY(-2px);
+            background-color: #0d111e;
         }
-
+ 
         ul {
-            list-style: none;
-            padding: 0;
-            margin-top: 20px;
+            list-style-type: square;
+            padding-left: 20px;
+            margin-top: 30px;
         }
-
+ 
         li {
-            background-color: #fefefe;
-            padding: 14px 18px;
             margin-bottom: 12px;
-            border-left: 5px solid #1565c0;
-            border-radius: 6px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-            transition: transform 0.2s ease;
+            background-color: #f2f2f2;
+            padding: 10px 14px;
+            border-left: 4px solid #20263a;
         }
-
-        li:hover {
-            transform: translateX(6px);
-        }
-
+ 
         @media (max-width: 600px) {
-            .container {
-                margin: 30px 16px;
+            .wrapper {
+                margin: 20px 12px;
                 padding: 20px;
             }
-
-            form {
-                flex-direction: column;
-                align-items: stretch;
+ 
+            header {
+                font-size: 20px;
+                padding: 18px 0;
             }
-
+ 
             input[type="submit"] {
                 width: 100%;
             }
@@ -168,25 +129,15 @@ $users = json_decode($response, true);
     </style>
 </head>
 <body>
-    <div class="bubble-bg">
-        <?php for ($i = 0; $i < 20; $i++): ?>
-            <div class="bubble" style="
-                left: <?= rand(0, 100) ?>%;
-                width: <?= rand(20, 60) ?>px;
-                height: <?= rand(20, 60) ?>px;
-                animation-duration: <?= rand(12, 28) ?>s;
-                animation-delay: <?= rand(0, 10) ?>s;"></div>
-        <?php endfor; ?>
-    </div>
-
-    <div class="container">
-        <h1>Write your Note Here</h1>
+    <header>Keep Notes</header>
+    <div class="wrapper">
+        <h2>Add a Note</h2>
         <form method="post">
-            <input type="text" name="name" required placeholder="Enter a name" />
-            <input type="submit" value="Submit" />
+            <textarea name="name" placeholder="Write a name or a note..." required></textarea>
+            <input type="submit" value="Add Note">
         </form>
-
-        <h2>Notes List</h2>
+ 
+        <h2>Saved Notes</h2>
         <ul>
             <?php foreach ($users as $user): ?>
                 <li><?= htmlspecialchars($user['name']) ?></li>
